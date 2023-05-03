@@ -1,0 +1,30 @@
+{% extends  'account/base.html' %}
+{% block content %}
+{% load static %}
+{% load socialaccount %}
+
+<!-- Masthead-->
+<header class="masthead text-white text-center">
+  <div class="container d-flex align-items-center flex-column">
+  </div>
+</div>
+
+<h1> Sign In </h1>
+
+<p>Don't have an account? <a href="{{ signup_url }}">Sign Up</a>.</p>
+
+<body>
+  <form class="signin" id="signin_form" method="post" action="{% url 'account_login' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+    {% endif %}
+    <button type="submit"> Sign In</button>
+  </form> 
+  <br>
+  <a href="{% provider_login_url 'google' %}"><button> Click Here To Login With Google</button> </a>
+  <br><br><br><br><br><br><br><br><br><br><br>
+</body>
+
+{% endblock %}

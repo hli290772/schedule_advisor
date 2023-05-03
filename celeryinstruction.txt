@@ -1,0 +1,7 @@
+1. start rabbitmq
+2. start celery beat
+celery -A mysite.celery beat
+3. start celery worker
+celery -A mysite worker --pool=solo -l info
+
+

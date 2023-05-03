@@ -1,0 +1,59 @@
+{% load static%}
+
+
+<!-- templates/base.html-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}UVA Schedule Builder{% endblock %}</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static 'schedule_advisor/theme/css/styles.css' %}" rel="stylesheet" />
+
+    <link href="{% static 'schedule_advisor/css/main.css' %}" rel="stylesheet" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+        <div class="container">
+            {% url 'schedule_advisor:index' as index_url %}
+            <a class="navbar-brand" href="{{ index_url }}">UVA Schedule Builder</a>
+            <button class="navbar-toggler text-uppercase font-weight-bold hs-bg-primary text-white rounded" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    {% url 'schedule_advisor:index' as index_url %}
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded {% if request.path == index_url %}active{% endif %}" href="{{ index_url }}">Home</a></li>
+                    {% url 'schedule_advisor:browse' as browse_url %}
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded {% if request.path == browse_url %}active{% endif %}" href="{{ browse_url }}">Browse Courses</a></li>
+                    {% url 'schedule_advisor:schedule' as schedule_url %}
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded {% if request.path == schedule_url %}active{% endif %}" href="{{ schedule_url }}">My Schedule</a></li>
+                    {% url 'schedule_advisor:advisor' as advisor_url %}
+                    <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded {% if request.path == advisor_url %}active{% endif %}" href="{{ advisor_url }}">Advisor</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <main id="main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{% static 'schedule_advisor/theme/js/scripts.js' %}"></script>
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</body>
+</html>

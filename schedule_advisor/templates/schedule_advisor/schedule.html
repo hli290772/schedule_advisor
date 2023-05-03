@@ -1,0 +1,200 @@
+{% extends  'schedule_advisor/base.html' %}
+
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Schedule{% endblock %}
+
+{% block content %}
+
+<style>
+    .viewtype1 {
+      background-color: khaki;
+      color: rgb(0, 0, 0);
+      cursor: pointer;
+      padding: 50px;
+      width: 100%;
+      border: none;
+      text-align: middle;
+      outline: none;
+      font-size: 20px;
+      font-style: italic;
+    }
+
+    .viewtype2 {
+      background-color: lightblue;
+      color: rgb(0, 0, 0);
+      cursor: pointer;
+      padding: 50px;
+      width: 100%;
+      border: none;
+      text-align: middle;
+      outline: none;
+      font-size: 20px;
+      font-style: italic;
+    }
+
+    .content {
+      padding: 0 18px;
+      display: none;
+      overflow: hidden;
+      background-color: #f1f1f1;
+    }
+</style>
+
+<button type="button" class="viewtype1">List View</button>
+    <div class="content">
+      <p>
+        {% if courses %}
+            {% for course in courses %}
+            <div>
+            <button class="accordion_button" style="background: lightblue;"> <strong>COURSE:</strong> {{course.subject}} {{course.catalog_nbr}} {{course.descr}} </button>
+            <div class="panel" style="background: lightpink;">          
+            <div class="row">                
+                <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:30%; ">       
+                    <p class="list-inline"><b>Course Number:</b>&nbsp;{{course.class_nbr}} </p>                    
+                    <p class="list-inline"><b>Section:</b>&nbsp;{{course.class_section}} </p> 
+                    <p class="list-inline"><b>Instructor:</b>&nbsp;{{course.instructor_name}} </p>
+                    <p class="list-inline"><b>Meet:</b>&nbsp;{{course.meetings_days}} {{course.meetings_start_time}} - {{course.meetings_end_time}} ({{course.facility_descr}})</p>                   
+                </div>  
+                <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:50%; ">
+                    <p class="list-inline"><b>Units:</b>&nbsp;{{course.units}} </p>              
+                    <p class="list-inline"><b>Seats Available:</b>&nbsp;{{course.enrollment_available}}/{{course.class_capacity}} </p>
+                    <p class="list-inline"><b>On Waitlist:</b>&nbsp;{{course.wait_tot}}/{{course.wait_cap}}</p>            
+                </div>
+                 <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:20%; ">
+                    <p class="list-inline"><form method="post">
+                        {% csrf_token %}
+                            <input type="hidden" value="{{ course.class_nbr }}" name="class_nbr">
+                            <button type="submit" class="btn btn-warning">Remove Course</button>  
+                    </form></p>
+                </div>
+            </div>                           
+            </div>
+            </div>   
+            {% endfor %}
+        {% endif %}
+
+        <script>
+            var acc = document.getElementsByClassName("accordion_button");
+            var i;
+            for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function() {
+                    this.classList.toggle("active");
+                    var panel = this.nextElementSibling;
+                    if (panel.style.display === "block") {
+                        panel.style.display = "none";
+                    } else {
+                        panel.style.display = "block";
+                    }
+                });
+            }
+        </script>
+      </p>
+    </div>
+
+ <button type="button" class="viewtype2">Calendar View</button>
+    <div class="content">
+      <p>
+        <div id="dp"></div>
+
+        <script src="{% static 'schedule_advisor/daypilot-all.min.js'%}"></script>
+        <script>
+            const dp = new DayPilot.Calendar("dp", {
+            viewType: "Week",
+            startDate: "2023-05-01",
+            headerDateFormat: "dddd",});
+        </script>
+        {% for course in courses %}
+
+        {% if course.meetings_days != "0" %} 
+
+        <script>
+            var meetings_days = "{{course.meetings_days}}";
+            var meetings_start_time = "{{course.meetings_start_time}}";
+            var meetings_end_time = "{{course.meetings_end_time}}";
+            while(meetings_days.length>0){
+                var day = meetings_days.substring(0,2);
+                meetings_days = meetings_days.substring(2);
+                var date = "";
+                if(day=="Mo"){
+                    date="2023-05-01T";
+                }
+                else if(day=="Tu"){
+                    date="2023-05-02T";
+                }
+                else if(day=="We"){
+                    date="2023-05-03T";
+                }
+                else if(day=="Th"){
+                    date="2023-05-04T";
+                }
+                else if(day=="Fr"){
+                    date="2023-05-05T";
+                }
+                else{
+                    date="2023-05-07T";
+                }
+                dp.events.add({
+                start: date + meetings_start_time.substring(0,2) + ":" + meetings_start_time.substring(3,5) + ":00",
+                end: date + meetings_end_time.substring(0,2) + ":" + meetings_end_time.substring(3,5) + ":00",
+                id: 0,
+                text: "{{course.subject}}" + "{{course.catalog_nbr}}" + "-" + "{{course.class_section}}"
+                });
+                }
+        </script>
+
+        {% endif %}
+        {% endfor %}
+
+        <script>
+            dp.init();
+        </script>        
+      </p>
+    </div>
+
+    <script>
+      var x = document.getElementsByClassName('viewtype1')
+      var i
+
+      for (i = 0; i < x.length; i++) {
+        x[i].addEventListener('click', function () {
+          this.classList.toggle('active')
+          var content = this.nextElementSibling
+          if (content.style.display === 'block') {
+            content.style.display = 'none'
+          } else {
+            content.style.display = 'block'
+          }
+        })
+      }
+    </script>
+    <script>
+      var x = document.getElementsByClassName('viewtype2')
+      var i
+
+      for (i = 0; i < x.length; i++) {
+        x[i].addEventListener('click', function () {
+          this.classList.toggle('active')
+          var content = this.nextElementSibling
+          if (content.style.display === 'block') {
+            content.style.display = 'none'
+          } else {
+            content.style.display = 'block'
+          }
+        })
+      }
+    </script>
+<!-- <script>
+    function open(columnContent) {
+        var j, x;
+        x = document.getElementsByClassName("tab");
+        for (j = 0; j < x.length; j++) {
+            x[j].style.display = "none";
+        }
+        document.getElementById(tabContent).style.display = "block";
+    }
+</script> -->
+
+
+{% endblock %}

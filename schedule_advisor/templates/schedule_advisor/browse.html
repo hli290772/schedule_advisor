@@ -1,0 +1,139 @@
+{% extends  'schedule_advisor/base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block title %}Browse courses{% endblock %}
+
+{% block content %}
+ 
+<style type="text/css">
+    body { background: #E5EEE1 !important;}
+    .card{
+      margin-left: 5px;
+      margin-right: 5px;
+      margin-bottom: 10px;
+    }
+    hr.rounded {
+      border-top: 5px solid #4c4c4c;
+      border-radius: 5px;
+    }
+    hr.solid {
+      border-top: 3px solid #b2b2b2;
+    }
+    .accordion_button {
+        background-color: #eee;
+        color: black;
+        cursor: pointer;
+        padding: 20px;
+        width: 60%;
+        text-align: left;
+        border:none;
+        outline: none;
+      border-bottom: solid;
+      border-color: rgb(194, 31, 39);
+    }
+    .active, .accordion_button:hover {
+      background-color: #ccc;
+    }  
+    .panel {
+      padding: 0 25px;
+      background-color: white;
+      display: none;
+      overflow: hidden;
+    }
+    .accordion_button:after {
+      content: '\02795'; /* Unicode character for "plus" sign (+) */
+      font-size: 13px;
+      color: #777;
+      float: right;
+      margin-left: 5px;
+    }
+
+    .active:after {
+      content: "\2796"; /* Unicode character for "minus" sign (-) */
+    }
+ </style>
+
+<!-- Instructions-->
+<p><b>Add courses to your schedule by searching via mnemnoic, number, or name!</b></p>
+<ul>
+  <li>Courses must be entered correctly when searching to be found </li>
+  <li>You can not add a course that conflicts with your schedule</li>
+  <li>You can not add the same course twice</li>
+  <li>You can not add a course with a full waitlist</li>
+  <li>You can not add more than 15 credits to your schedule</li>
+</ul>
+
+<!-- Search -->
+<form method="post">
+    {% csrf_token %}
+    <input list="subject" type = "text" name = "subject_search" placeholder="Search by a mnemonic...">
+    <datalist id="subject">
+        {% for subject in subjects %}
+        <option value={{subject.abbreviation}}>
+        {% endfor %}                  
+    </datalist>
+    <input type = "text" name = "catalog_nbr_search" placeholder="and/or its number...">
+    <input type = "text" name = "descr_search" placeholder="or just a course name">
+    <button type = "submit" class = "btn">SEARCH</button>
+</form>
+
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+{% if invalidCourseSearchedMessage %}
+    <p>{{ invalidCourseSearchedMessage }}</p>
+{% endif %}
+
+<!-- Courses -->
+{% if courses_grouped %}
+    {% for group, courses in courses_grouped.items %}
+    <div>
+    <button class="accordion_button"> {{courses.0.subject}} {{courses.0.catalog_nbr}} {{courses.0.descr}} </button>
+    <div class="panel">
+        {% for course in courses %}             
+        <div class="row">                
+          <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:30%; ">       
+            <p class="list-inline"><b>Course Number:</b>&nbsp;{{course.class_nbr}} </p>                    
+            <p class="list-inline"><b>Section:</b>&nbsp;{{course.class_section}} </p> 
+            <p class="list-inline"><b>Instructor:</b>&nbsp;{{course.instructor_name}} </p>
+            <p class="list-inline"><b>Meet:</b>&nbsp;{{course.meetings_days}} {{course.meetings_start_time}} - {{course.meetings_end_time}} ({{course.facility_descr}})</p>                   
+          </div>  
+          <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:50%; ">
+            <p class="list-inline"><b>Units:</b>&nbsp;{{course.units}} </p>              
+            <p class="list-inline"><b>Seats Available:</b>&nbsp;{{course.enrollment_available}}/{{course.class_capacity}} </p>
+            <p class="list-inline"><b>On Waitlist:</b>&nbsp;{{course.wait_tot}}/{{course.wait_cap}}</p>            
+          </div>
+          <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:20%; ">
+            <p class="list-inline"><form method="post">
+              {% csrf_token %}
+                <input type="hidden" value="{{ course.class_nbr }}" name="class_nbr">
+                <button type="submit" class="btn btn-warning">+ Add Class To Schedule</button>  
+            </form></p>
+          </div>
+        </div>                           
+        {% endfor %}
+    </div>
+    </div>   
+    {% endfor %}
+{% endif %}
+<script>
+    var acc = document.getElementsByClassName("accordion_button");
+    var i;
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+</script>
+
+
+
+{% endblock %}

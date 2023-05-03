@@ -1,0 +1,18 @@
+# Django is needed to run Django
+Django~=4.1.7
+
+# gunicorn is needed by Heroku to launch the web server
+gunicorn
+
+# django-heroku is ONLY needed by Heroku for their internal process
+django-heroku
+
+django-allauth==0.52.0
+
+requests
+
+psycopg2-binary
+
+celery
+
+whitenoise

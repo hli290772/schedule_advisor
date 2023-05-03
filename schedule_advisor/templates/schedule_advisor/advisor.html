@@ -1,0 +1,64 @@
+{% extends  'schedule_advisor/base.html' %}
+
+{% load static %}
+{% load socialaccount %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+{% if is_advisor %}
+
+    Your advisees are 
+
+    {% for advisee in advisees %}
+    <p>{{advisee.user.username}}</p>
+    <p>This advisee's schedule is</p>
+
+    {% for course in advisee.courses.all %}             
+    <div class="row">                
+        <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:30%; ">       
+        <p class="list-inline"><b>Course Number:</b>&nbsp;{{course.class_nbr}} </p>                    
+        <p class="list-inline"><b>Section:</b>&nbsp;{{course.class_section}} </p> 
+        <p class="list-inline"><b>Instructor:</b>&nbsp;{{course.instructor_name}} </p>
+        <p class="list-inline"><b>Meet:</b>&nbsp;{{course.meetings_days}} {{course.meetings_start_time}} - {{course.meetings_end_time}} ({{course.facility_descr}})</p>                   
+        </div>  
+        <div class="column" style="padding:12px; border-bottom:solid; border-bottom-color: greenyellow; float:left; width:50%; ">
+        <p class="list-inline"><b>Units:</b>&nbsp;{{course.units}} </p>              
+        <p class="list-inline"><b>Seats Available:</b>&nbsp;{{course.enrollment_available}}/{{course.class_capacity}} </p>
+        <p class="list-inline"><b>On Waitlist:</b>&nbsp;{{course.wait_tot}}/{{course.wait_cap}}</p>            
+        </div>
+    </div>                           
+    {% endfor %}
+    <p>
+        <form method="post">
+        {% csrf_token %}
+        <input type="hidden" value={{advisee.user.username}} name="approve">
+        <button type="submit" class="btn btn-warning">Approve</button>  
+        </form>
+    </p>
+    <p>
+        <a href="https://schedule-advisor-b-10.herokuapp.com"> 
+            <button type="submit" class="btn btn-warning">Reject</button>
+        </a>
+    </p>
+    <!-- https://schedule-advisor-b-10.herokuapp.com/ -->
+    {% endfor %}
+{% else %}
+    {% if advisor %}
+    Your advisor is {{advisor.username}}
+        {% if approved %}
+            Your schedule is approved. Yay!
+        {% else %}
+            You schedule has been rejected, please submit again.
+        {% endif %}
+    {% else %}
+    You are a student and you currently have no advisor. Wait for the administrator to assign you one.
+    {% endif %}
+    <p>Submit your schedule for approval</p>
+    <p>
+        <a href="https://schedule-advisor-b-10.herokuapp.com"> 
+            <button type="submit" class="btn btn-warning">Submit Current Schedule</button>
+        </a>
+    </p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+#main {
+    padding-top: calc(74px);
+}
+
+@media (min-width: 992px) {
+    #main {
+      padding-top: calc(104px);
+    }
+}
+
+.hs-bg-primary {
+    background-color: #ffa500;
+}
+
+#mainNav .navbar-nav > li.nav-item > a.nav-link.active {
+    color: #fff;
+    background: #ffa500;
+}
+
+.masthead .masthead-avatar {
+    width: 170px;
+    height: 170px;
+}
+
+.masthead {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+@media (min-width: 992px) {
+    .masthead {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+}
+
+.masthead {
+    background-image: url("../img/uva.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+

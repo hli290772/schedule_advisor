@@ -1,0 +1,33 @@
+{% extends  'schedule_advisor/base.html' %}
+
+{% load static %}
+{% load socialaccount %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Masthead-->
+<header class="masthead text-white text-center">
+    <div class="container d-flex align-items-center flex-column">
+        <!-- Masthead Avatar Image-->
+        <img class="masthead-avatar mb-5" src="{% static 'schedule_advisor/img/circle.png' %}" alt="" />
+        <!-- Masthead Heading-->
+        <h1 class="masthead-heading text-uppercase mb-0">Build Your Schedule</h1>
+    </div>
+</div>
+{% if user.is_authenticated %}
+  <p>Welcome, you are logged in as {{ user.username }}.</p>
+  <p>Site Instructions:</p>
+  <p>First, add courses to your schedule via the "BROWSE COURSES" tab.</p>
+  <p>Then, submit your schedule to an advisor.</p>
+  <p>Finally, wait for your adivsor to approve your schedule!</p>
+  <p><a href="/accounts/logout">Click Here To Logout</a></p>
+{% else %}
+  <p>You must be logged in to use the site.</p>
+  <form action="/accounts/login/">
+    <button class = "btn btn-primary">Log In </button>
+  </form>
+{% endif %}
+
+<br><br><br><br><br><br><br><br><br>
+
+{% endblock %}
